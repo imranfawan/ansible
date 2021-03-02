@@ -6,7 +6,7 @@
 Ansible requires PowerShell version 3.0 and .NET Framework 4.0 
 
 
-- Remove auto-login (This isn't needed but is a good security practice to complete)
+Remove auto-login (This isn't needed but is a good security practice to complete)
 
 ```bash
 Set-ExecutionPolicy -ExecutionPolicy Restricted -Force
@@ -106,5 +106,7 @@ choco install git.install
 
 
 https://docs.ansible.com
+
 https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
+
 https://chocolatey.org/install
