@@ -2,22 +2,22 @@
 
 * Configure a basic (and brand new) Windows 10 Enterprise system for Ansible access
 
-- Requirements: 
 
 Ansible requires PowerShell version 3.0 and .NET Framework 4.0 
 
 
 - Remove auto-login (This isn't needed but is a good security practice to complete)
 
+```bash
 Set-ExecutionPolicy -ExecutionPolicy Restricted -Force
 
 $reg_winlogon_path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon"
 Set-ItemProperty -Path $reg_winlogon_path -Name AutoAdminLogon -Value 0
 Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultUserName -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultPassword -ErrorAction SilentlyContinue
+```
 
 WinRM Setup
-
 
 Once Powershell has been upgraded to at least version 3.0, the final step is for the WinRM service to be configured so that Ansible can connect to it. There are two main components of the WinRM service that governs how Ansible can interface with the Windows host: the listener and the service configuration settings.
 
@@ -25,13 +25,14 @@ Details about each component can be read below, but the script ConfigureRemoting
 
 To use this script, run the following in PowerShell:
 
+```bash
 $url = "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
 $file = "$env:temp\ConfigureRemotingForAnsible.ps1"
 
 (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
 
 powershell.exe -ExecutionPolicy ByPass -File $file
-
+```
 
 
 * Install Chocolatey Windows Package Manager using Ansible for Window Only
@@ -45,8 +46,9 @@ Now run the following command:
 
 Paste the copied text into your shell and press Enter.
 
+```bash
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
+```
 
 
 
@@ -62,6 +64,8 @@ Install the openssh package using Chocolatey:
 
 choco install --package-parameters=/SSHServerFeature openssh
 Use win_chocolatey to install the service:
+
+```bash
 
 - name: install the Win32-OpenSSH service
   win_chocolatey:
@@ -89,15 +93,16 @@ ansible-galaxy install jborean93.win_openssh
     user: <username>
     state: present
     key: "{{ lookup('file', '/home/<username>/.ssh/id_rsa.pub') }}"
-
+```
 
 
 * Install Git using Chocolatey
 
 Assuming the above instructions have been followed to install Chocolatey, simpley run the following commands to install Git
 
+```bash
 choco install git.install
-
+```
 
 
 https://docs.ansible.com
