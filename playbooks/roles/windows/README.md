@@ -104,6 +104,7 @@ Assuming the above instructions have been followed to install Chocolatey, simple
 choco install git.install
 ```
 
+References
 
 https://docs.ansible.com
 
