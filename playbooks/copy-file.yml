@@ -1,0 +1,6 @@
+---
+- name: copy-file
+  hosts: all
+  become: true
+  roles:
+    - copy-file
