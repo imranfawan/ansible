@@ -48,6 +48,9 @@
    state: present
    filename: 'kubernetes'
 
+- name: Upgrade all packages to the latest version
+  apt: update_cache=yes upgrade=full
+
 - name: install kubelet
   apt:
     name: kubelet
@@ -69,13 +72,13 @@
 
 - name: initialize the cluster
   become: yes
-  shell: kubeadm init --pod-network-cidr=10.17.0.0/16 --service-cidr=10.18.0.0/24 --service-dns-domain=imranawan.com
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --service-cidr=10.18.0.0/24 --service-dns-domain=imranawan.com
   when: inventory_hostname in groups['masters']
 
 - name: create .kube directory
   become: yes
   file:
-    path: /root/.kube
+    path: /$HOME/.kube
     state: directory
     mode: 0755
   when: inventory_hostname in groups['masters']
@@ -88,13 +91,18 @@
     owner: root
   when: inventory_hostname in groups['masters']
 
-- name: copy pod network manifest
-  copy:
-    src: canal.yaml
-    dest: /root
+# - name: copy pod network manifest
+#   copy:
+#     src: canal.yaml
+#     dest: /root
 
 - name: install pod network
-  shell: kubectl apply -f /root/canal.yaml
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 
+  #shell: kubectl apply -f /root/canal.yaml
+  when: inventory_hostname in groups['masters']
+
+- name: Copy Kube Config
+  shell: export KUBECONFIG=/etc/kubernetes/admin.conf
   when: inventory_hostname in groups['masters']
 
 #########SET UP WORKERS #################
@@ -117,3 +125,4 @@
 - name: Join the node to cluster
   command: sh /tmp/join-command.sh
   when: inventory_hostname in groups['workers']
+  
